@@ -3,13 +3,13 @@
 
 [comment]: <> ()
 
-[comment]: <> (Copyright (c) 2019 Kopaniev Vladyslav)
+[comment]: <> (Copyright c 2019 Kopaniev Vladyslav)
 
-[comment]: <> (Copyright (c) 2024 Jack C. Viers)
+[comment]: <> (Copyright c 2024 Jack C. Viers)
 
 [comment]: <> (Permission is hereby granted, free of charge, to any person obtaining a copy)
 
-[comment]: <> (of this software and associated documentation files (the "Software"), to deal)
+[comment]: <> (of this software and associated documentation files [the "Software"], to deal)
 
 [comment]: <> (in the Software without restriction, including without limitation the rights)
 
