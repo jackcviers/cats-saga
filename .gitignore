@@ -46,6 +46,9 @@ bin/
 # mac
 .DS_Store
 
+# mill
+/out/
+
 # other?
 .history
 .scala_dependencies

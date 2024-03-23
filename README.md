@@ -1,35 +1,80 @@
+
+[comment]: <> (MIT License)
+
+[comment]: <> ()
+
+[comment]: <> (Copyright (c) 2019 Kopaniev Vladyslav)
+
+[comment]: <> (Copyright (c) 2024 Jack C. Viers)
+
+[comment]: <> (Permission is hereby granted, free of charge, to any person obtaining a copy)
+
+[comment]: <> (of this software and associated documentation files (the "Software"), to deal)
+
+[comment]: <> (in the Software without restriction, including without limitation the rights)
+
+[comment]: <> (to use, copy, modify, merge, publish, distribute, sublicense, and/or sell)
+
+[comment]: <> (copies of the Software, and to permit persons to whom the Software is)
+
+[comment]: <> (furnished to do so, subject to the following conditions:)
+
+[comment]: <> ()
+
+[comment]: <> (The above copyright notice and this permission notice shall be included in all)
+
+[comment]: <> (copies or substantial portions of the Software.)
+
+[comment]: <> ()
+
+[comment]: <> (THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR)
+
+[comment]: <> (IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,)
+
+[comment]: <> (FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE)
+
+[comment]: <> (AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER)
+
+[comment]: <> (LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,)
+
+[comment]: <> (OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE)
+
+[comment]: <> (SOFTWARE.)
+
+# This is a hard fork of the archived [https://github.com/vladkopanev/cats-saga](vladkopanev/cats-saga) project. All attributions have been maintained to the original author.
+
 # CATS-SAGA
+
 Purely Functional Transaction Management In Scala With Cats
 
-> [!WARNING]
-> This project is no longer supported. For implementing real world sagas consider workflow orchestration tools like Temporal that has available libraries for Scala e.g. [zio-temporal](https://github.com/vitaliihonta/zio-temporal). Also feel free to fork this repository and modify it for your own needs.
+> [!WARNING] This project is for minor, lightweight, localized saga
+> transactional use cases and is not a fully, distributed,
+> fault-tolerant workflow orchestration/choreographed saga
+> project. Please look elsewhere for that. It merely allows for local
+> compensating calls within workflow steps on in a single
+> program. Though it can be journaled to a database, there is no
+> external coordinating service or queue, which is required for
+> durability and fault-tolerant behavior.
 
-[![Support Ukraine](https://img.shields.io/static/v1?label=United24&message=Support%20Ukraine&color=lightgrey&link=https%3A%2F%2Fu24.gov.ua&logo=data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAASwAAADICAYAAABS39xVAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAANKSURBVHhe7dZBThRhFEbRnx1IgvtFiIoxbgemOHLAhAoJ1QyaBahroKxqE%2BMS6iZncPKSbwE3b4yr6W58en4Z148zwC5tjbqabrdgvZ59PS5nn2eAfVobtbbquAXrcBquJ4B9Wht1%2BrQEC9g9wQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8j4F6zL%2BTA%2BHpfxYR0A9mhr1OXzPC5u7g%2Fvv%2F1YLr58B9ilU6Nu7ufx6%2BH88Hs6X9YLsEtbo34%2BvJvH29M4LC9jWZ4Admpt1NqqNVjTGqz5bFkmgJ1aG%2FX2KFhAgWABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVk%2FBes1%2BX4dwDYpbVRa6uOW7Du3p7Hy1YvgF3aGjWN2z9qCgwkg1n6XwAAAABJRU5ErkJggg%3D%3D)](https://u24.gov.ua)
-[![badge-scala-ukraine](https://img.shields.io/badge/Scala-Ukraine-EBD038?labelColor=4172CC)](https://t.me/scala_ukraine)
-| CI | Coverage | Release |  |
-| --- | --- | --- | --- |
-| [![Build Status][Badge-Travis]][Link-Travis] | [![Coverage Status][Badge-Codecov]][Link-Codecov] | [![Release Artifacts][Badge-SonatypeReleases]][Link-SonatypeReleases] | [![Scala Steward badge][Badge-ScalaSteward]][Link-ScalaSteward] |
+# What is the saga pattern?
 
-![Cats Friendly Badge](https://typelevel.org/cats/img/cats-badge-tiny.png) 
-
-# Disclaimer
-
-This library was inspired by [goedverhaal](https://github.com/vectos/goedverhaal), but it's implementation
-and semantics differs, it tries to be semantically consistent with [zio-saga](https://github.com/VladKopanev/zio-saga) 
-and provide you with flexible and powerful functions for building Sagas of different complexities.
-
-# For whom this library?
-
-This library is designed for those who want to apply Saga pattern on their codebase and to encode long-running transactions.
-Moreover if you use tagless final encoding this library is a perfect fit. 
-Also consider looking at [zio-saga](https://github.com/VladKopanev/zio-saga), it's designed specifically for 
-[ZIO](https://github.com/zio/zio) users. Although you could use this library with `ZIO` as well.
+The [saga pattern](https://microservices.io/patterns/data/saga.html)
+is a microservice pattern in which operations which may fail execute
+under the control of other services or through remote execution (via
+RPC, api-call, event emission, etc) can be rolled back transactionally
+via the use of compensating actions.
 
 # Getting started
 
-Add zio-saga dependency to your `build.sbt`:
+## sbt
 
-`libraryDependencies += "com.vladkopanev" %% "cats-saga" % "0.3.0"`
+Add cats-saga dependency to our `build.sbt`:
+
+`"com.jackcviers" %% "cats-saga" % "<version>"`
+
+## mill
+
+`ivy"com.jackcviers::cats-saga:<version>"`
 
 # Example of usage:
 
@@ -79,13 +124,13 @@ def orderSaga: IO[Unit] = {
 This works, we trigger all rollback actions by failing after each. 
 But the implementation itself looks awful, we lost expressiveness in the call-back hell, imagine 15 saga steps implemented in such manner.
 
-You can solve this problems in different ways, but you will encounter a number of difficulties, and your code still would 
+We can solve this problems in different ways, but we will encounter a number of difficulties, and our code still would 
 look pretty much the same as we did in our last try. 
 
-Achieve a generic solution is not that simple, so you will end up
+Achieve a generic solution is not that simple, so we will end up
 repeating the same boilerplate code from service to service.
 
-`cats-saga` tries to address this concerns and provide you with simple syntax to compose your Sagas.
+`cats-saga` tries to address these concerns and provide us with simple syntax to compose our Sagas.
 
 With `cats-saga` we could do it like so:
 
@@ -101,11 +146,13 @@ def orderSaga(): IO[Unit] = {
 }
 ```
 
-`compensate` pairs request IO with compensating action IO and returns a new `Saga` object which then you can compose
- with other `Sagas`.
-To materialize `Saga` object to `IO` when it's complete it is required to use `transact` method.
+`compensate` pairs request `F[_]` actions with compensating `IO` actions
+ and returns a new `Saga` object which we then compose with other
+ `Sagas`.  To materialize `Saga` object to `F[_]` when it's complete it
+ is required to use `transact` method.
 
-Because `Saga` is effect polymorphic you could use whatever effect type you want in tagless final style:
+Because `Saga` is effect polymorphic we could use whatever effect
+type we want in tagless final style:
 
 ```scala
 def orderSaga[F[_]: Concurrent](): F[Unit] = {
@@ -119,28 +166,32 @@ def orderSaga[F[_]: Concurrent](): F[Unit] = {
 }
 ```
 
-As you can see with `cats-saga` the process of building your Sagas is greatly simplified comparably to ad-hoc solutions. 
-`cats-sagas` are composable, boilerplate-free and intuitively understandable for people that aware of Saga pattern.
-This library lets you compose transaction steps both in sequence and in parallel, 
-this feature gives you more powerful control over transaction execution.
+As we can see with `cats-saga` the process of building our Sagas is
+greatly simplified comparably to ad-hoc solutions.  `cats-saga`s are
+composable, boilerplate-free and intuitively understandable for people
+that aware of Saga pattern.  This library lets us compose transaction
+steps both in sequence and in parallel, this feature gives us more
+powerful control over transaction execution.
 
-# Advanced
+# Advanced Usage
 
-Advanced example of working application that stores saga state in DB (journaling) could be found 
+An advanced example of working application that stores saga state in DB (journaling) can be found 
 here [examples](/examples).
 
-### Retrying
-`cats-saga` provides you with functions for retrying your compensating actions, so you could write:
+## Retrying
+
+`cats-saga` provides us with functions for retrying our compensating actions, so we can write:
 
  ```scala
 collectPayments(2d, 2) retryableCompensate (refundPayments(2d, 2), RetryPolicies.exponentialBackoff(1.second))
 ```
 
-In this example your Saga will retry compensating action `refundPayments` after exponentially 
+In this example our Saga will retry compensating action `refundPayments` after exponentially 
 increasing timeouts (based on [cats-retry](https://github.com/cb372/cats-retry)).
 
 
 ### Parallel execution
+
 Saga pattern does not limit transactional requests to run only in sequence.
 Because of that `cats-sagas` contains methods for parallel execution of requests. 
 
@@ -151,12 +202,12 @@ Because of that `cats-sagas` contains methods for parallel execution of requests
 ```
 
 Note that in this case two compensations would run in sequence, one after another by default.
-If you need to execute compensations in parallel consider using `Saga#zipWithParAll` function, it allows arbitrary 
+If we need to execute compensations in parallel consider using `Saga#zipWithParAll` function, it allows arbitrary 
 combinations of compensating actions.
 
 ### Result dependent compensations
 
-Depending on the result of compensable effect you may want to execute specific compensation, for such cases `cats-saga`
+Depending on the result of compensable effect we may want to execute specific compensation, for such cases `cats-saga`
 contains specific functions:
 - `compensate(compensation: Either[E, A] => F[Unit])` this function makes compensation dependent on the result 
 of corresponding effect that either fails or succeeds.
@@ -170,17 +221,3 @@ successful result type hence compensation can only occur if corresponding effect
 By default, if some compensation action fails no other compensation would run and therefore user has the ability to 
 choose what to do: stop compensation (by default), retry failed compensation step until it succeeds or proceed to next 
 compensation steps ignoring the failure.
-
-### For ZIO users
-
-[zio-saga](https://github.com/VladKopanev/zio-saga)
-
-[Link-Codecov]: https://codecov.io/gh/VladKopanev/cats-saga?branch=master "Codecov"
-[Link-Travis]: https://travis-ci.com/VladKopanev/cats-saga "circleci"
-[Link-SonatypeReleases]: https://repo1.maven.org/maven2/com/vladkopanev/cats-saga_2.12/ "Sonatype Releases"
-[Link-ScalaSteward]: https://scala-steward.org
-
-[Badge-Codecov]: https://codecov.io/gh/VladKopanev/cats-saga/branch/master/graph/badge.svg "Codecov" 
-[Badge-Travis]: https://travis-ci.com/VladKopanev/cats-saga.svg?branch=master "Codecov" 
-[Badge-SonatypeReleases]: https://img.shields.io/nexus/r/https/oss.sonatype.org/com.vladkopanev/cats-saga_2.12.svg "Sonatype Releases"
-[Badge-ScalaSteward]: https://img.shields.io/badge/Scala_Steward-helping-brightgreen.svg?style=flat&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAQCAMAAAARSr4IAAAAVFBMVEUAAACHjojlOy5NWlrKzcYRKjGFjIbp293YycuLa3pYY2LSqql4f3pCUFTgSjNodYRmcXUsPD/NTTbjRS+2jomhgnzNc223cGvZS0HaSD0XLjbaSjElhIr+AAAAAXRSTlMAQObYZgAAAHlJREFUCNdNyosOwyAIhWHAQS1Vt7a77/3fcxxdmv0xwmckutAR1nkm4ggbyEcg/wWmlGLDAA3oL50xi6fk5ffZ3E2E3QfZDCcCN2YtbEWZt+Drc6u6rlqv7Uk0LdKqqr5rk2UCRXOk0vmQKGfc94nOJyQjouF9H/wCc9gECEYfONoAAAAASUVORK5CYII=

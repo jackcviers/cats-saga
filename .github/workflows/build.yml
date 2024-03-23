@@ -1,0 +1,107 @@
+# Copyright 2024 Jack C. Viers
+# 
+# Permission is hereby granted, free of charge, to any person obtaining a copy of
+# this software and associated documentation files (the "Software"), to deal in
+# the Software without restriction, including without limitation the rights to
+# use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+# the Software, and to permit persons to whom the Software is furnished to do so,
+# subject to the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+# FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+# COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+# IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+---
+on: 
+  push:
+    branches:
+      - main
+    tags:
+      - '**'
+  pull_request:
+  workflow_dispatch:
+
+# cancel older runs of a pull request;
+# this will not cancel anything for normal git pushes
+concurrency:
+  group: cancel-old-pr-runs-${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        java-version: [8, 11, 17]
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: coursier/cache-action@v6
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.java-version }}
+          distribution: temurin
+
+      - run: ./mill -i findLatestMill --toFile MILL_DEV_VERSION
+        if: github.event_name == 'workflow_dispatch'
+
+      - run: ./mill -j 0 __.publishLocal testRepo
+
+      - run: ./mill -j 0 -k __.compile + __.testCached
+
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: coursier/cache-action@v6
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: 8
+          distribution: temurin
+
+      - run: ./mill -j 0 __.mimaReportBinaryIssues
+      - run: ./mill -j 0 __.headerCheck
+
+  publish:
+    needs: [build, checks]
+    if: github.repository == 'jackcviers/cats-saga' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    concurrency: publish-{{ github.sha }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: coursier/cache-action@v6
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: 8
+          distribution: temurin
+
+      - run: ./mill -j 0 __.publishLocal $(pwd)/testRepo
+
+      - name: Setup GPG secrets for publish
+        run: |
+          gpg --version
+          cat <(echo "${{ secrets.GPG_SECRET_KEY }}") | base64 --decode | gpg --batch --import
+          gpg --list-secret-keys --keyid-format LONG
+      - name: Publish to Maven Central
+        run: ./mill -i mill.scalalib.PublishModule/publishAll __.publishArtifacts --sonatypeCreds "${{secrets.SONATYPE_USER}}:${{ secrets.SONATYPE_PASSWORD }}" --gpgArgs "--passphrase=${{ secrets.GPG_SECRET_KEY_PASS}},--batch,--yes,-a,-b,--pinentry-mode,loopback" --readTimeout 600000 --awaitTimeout 600000 --release true --signed true --sonatypeUri https://s01.oss.sonatype.org/service/local --sonatypeSnapshotUri https://s01.oss.sonatype.org/content/repositories/snapshots
+        if: github.event_name != 'workflow_dispatch'
