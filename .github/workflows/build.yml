@@ -53,9 +53,6 @@ jobs:
           java-version: ${{ matrix.java-version }}
           distribution: temurin
 
-      - run: ./mill -i findLatestMill --toFile MILL_DEV_VERSION
-        if: github.event_name == 'workflow_dispatch'
-
       - run: ./mill -j 0 __.publishLocal testRepo
 
       - run: ./mill -j 0 -k __.compile + __.testCached
