@@ -38,7 +38,7 @@ import mill.scalalib.publish._
 import java.time.Year
 
 val versions = new {
-  val cats = "2.9.0"
+  val cats = "2.10.0"
   val `cats-effect` = "3.4.0"
   val `cats-retry` = "3.1.0"
   val scalatest = "3.2.12"
