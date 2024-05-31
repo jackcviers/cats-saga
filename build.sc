@@ -29,7 +29,7 @@ import $ivy.`com.lewisjkl::header-mill-plugin::0.0.3`
 import header._
 import $ivy.`de.tototec::de.tobiasroeser.mill.vcs.version::0.4.0`
 import de.tobiasroeser.mill.vcs.version._
-import $ivy.`com.github.lolgab::mill-mima::0.1.0`
+import $ivy.`com.github.lolgab::mill-mima::0.1.1`
 import com.github.lolgab.mill.mima._
 import mill._
 import mill.scalalib._
