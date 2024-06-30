@@ -40,7 +40,7 @@ import java.time.Year
 val versions = new {
   val cats = "2.9.0"
   val `cats-effect` = "3.4.0"
-  val `cats-retry` = "3.1.0"
+  val `cats-retry` = "3.1.3"
   val scalatest = "3.2.19"
   val discipline = "1.5.1"
   val `discipline-scalatest` = "2.2.0"
