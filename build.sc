@@ -48,7 +48,7 @@ val versions = new {
   val log4Cats = "2.1.1"
   val doobie = "1.0.0-M5"
   val circe = "0.14.1"
-  val `logback-classic` = "1.2.3"
+  val `logback-classic` = "1.2.13"
   val `kind-projector` = "0.13.3"
   val `better-monadic-for` = "0.3.1"
 }
