@@ -27,7 +27,7 @@ import $ivy.`io.github.davidgregory084::mill-tpolecat::0.3.5`
 import io.github.davidgregory084.TpolecatModule
 import $ivy.`com.lewisjkl::header-mill-plugin::0.0.3`
 import header._
-import $ivy.`de.tototec::de.tobiasroeser.mill.vcs.version::0.4.0`
+import $ivy.`de.tototec::de.tobiasroeser.mill.vcs.version::0.4.1`
 import de.tobiasroeser.mill.vcs.version._
 import $ivy.`com.github.lolgab::mill-mima::0.1.0`
 import com.github.lolgab.mill.mima._
